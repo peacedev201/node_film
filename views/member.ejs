@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.2.0/css/font-awesome.min.css" />
+    <link href='https://fonts.googleapis.com/css?family=Slabo+27px|Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+  </head>
+  <body>
+    <div class="navbar">
+      <ul id="header">
+        <a href="#" id="brand">
+          <li>
+            Films
+          </li>
+        </a>
+        <label id="trigger2" for="x7"><i class="fa fa-bars"></i></label>
+      </ul>
+      <input type="checkbox" id="x7" />
+      <ul id="main">
+        <a href="#">
+          <li class="x1">
+            Link
+          </li>
+        </a>
+        <a href="#" id="trigger">
+          <li class="x1">
+            Dropdown &nbsp;
+            <span id="caret"></span>
+          </li>
+        </a>
+        <ul id="dropdown">
+          <a href="/member">
+            <li>
+              Members
+            </li>
+          </a>
+          <a href="login">
+            <li>
+              Login
+            </li>
+          </a>
+          <a href="/logout">
+            <li>
+              Log out
+            </li>
+          </a>
+          <div class="dropdown-devider"></div>
+          <a href="#">
+            <li>
+              Something else here
+            </li>
+          </a>
+        </ul>
+      </ul>
+    </div>
+    <div class="main">
+        <div class="container" id="">
+          <% if (message) { %>
+            <div class="info-alert">
+              <p>User successfully updated!</p>
+            </div>
+          <% } %>
+          
+            <h2>Members</h2>
+            <a href="/user/add"><button class="add-user">+Add</button></a>
+            <table class="user-table">
+              <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Share</th>
+              </tr>
+              <% for(var i=0; i < userdatas.length; i++) { %>
+                <tr>
+                  <td><%= i + 1 %></td>
+                  <td><%= userdatas[i].username %></td>
+                  <td><a href="/permission/<%= userdatas[i].userid %>" class="btn btn-info">Permission</a></td>
+                </tr>
+              <% } %>
+            </table>
+        </div>
+    </div>
+
+  </body>
+</html>

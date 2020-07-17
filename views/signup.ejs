@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.2.0/css/font-awesome.min.css" />
+    <link href='https://fonts.googleapis.com/css?family=Slabo+27px|Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+  </head>
+  <body>
+    <div class="navbar">
+      <ul id="header">
+        <a href="#" id="brand">
+          <li>
+            Films
+          </li>
+        </a>
+        <label id="trigger2" for="x7"><i class="fa fa-bars"></i></label>
+      </ul>
+      <input type="checkbox" id="x7" />
+      <ul id="main">
+        <a href="#">
+          <li class="x1">
+            Link
+          </li>
+        </a>
+        <a href="#" id="trigger">
+          <li class="x1">
+            Dropdown &nbsp;
+            <span id="caret"></span>
+          </li>
+        </a>
+        <ul id="dropdown">
+          <a href="/member">
+            <li>
+              Members
+            </li>
+          </a>
+          <a href="/login">
+            <li>
+              Login
+            </li>
+          </a>
+          <a href="/logout">
+            <li>
+              Log out
+            </li>
+          </a>
+          <div class="dropdown-devider"></div>
+          <a href="#">
+            <li>
+              Something else here
+            </li>
+          </a>
+        </ul>
+      </ul>
+    </div>
+    <div class="main">
+        <div class="container" id="">
+          <h2>Add User</h2>
+          <% if (hasErrors) { %>
+            <div class="alert alert-danger" >
+              <% for(var i=0; i < messages.length; i++) { %>
+                <p style="margin: 0 !important;"><%= messages[i] %></p>
+              <% } %>
+            </div>
+            <%} else { %>
+            <!-- <p> Not Allowed </p> -->
+            <% } %>
+          <form action="/user/add" method="post" id="signupForm">
+            <div class="form-group">
+              <label for="username"> Username </label>
+              <input type="text" id="username" name="username" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="password"> Password </label>
+              <input type="password" id="password" name="password" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="repassword"> Repeat password </label>
+              <input type="password" id="repassword" name="repassword" class="form-control">
+            </div>
+
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="success">Add</button>
+            <a href="/member"><button type="button" class="return">Return</button></a>
+          </form>
+        </div>
+    </div>
+  </body>
+</html>

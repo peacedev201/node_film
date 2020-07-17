@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.2.0/css/font-awesome.min.css" />
+    <link href='https://fonts.googleapis.com/css?family=Slabo+27px|Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  </head>
+  <body>
+    <div id="film">
+      <div class="navbar">
+        <ul id="header">
+          <a href="#" id="brand">
+            <li>
+              Films
+            </li>
+          </a>
+          <label id="trigger2" for="x7"><i class="fa fa-bars"></i></label>
+        </ul>
+        <input type="checkbox" id="x7" />
+        <ul id="main">
+          <a href="#">
+            <li class="x1">
+              Hello {{username}}
+            </li>
+          </a>
+          <a href="#">
+            <li class="x1">
+              Link
+            </li>
+          </a>
+          <a href="#" id="trigger">
+            <li class="x1">
+              Dropdown &nbsp;
+              <span id="caret"></span>
+            </li>
+          </a>
+          <ul id="dropdown">
+            <a href="/member">
+              <li>
+                Members
+              </li>
+            </a>
+            <a href="/login">
+              <li>
+                Login
+              </li>
+            </a>
+            <a href="/logout">
+              <li>
+                Log out
+              </li>
+            </a>
+            <div class="dropdown-devider"></div>
+            <a href="#">
+              <li>
+                Something else here
+              </li>
+            </a>
+          </ul>
+        </ul>
+      </div>
+      <div class="main">
+        <div class="container" >
+          <h2>Film</h2>
+          <div class="filter-container">
+            <input type="text" id="year-filter" placeholder="The year of publishment" v-if="year" class="form-control filter-input" v-on:input="changeYear($event)">
+
+            <select name="" id="category-filter" v-if="category" class="form-control filter-input" v-on:change="filter" v-model="category_val">
+              <option value="">Category</option>
+              <option v-for="(item, index) in category_data" :key="index" :value="item">{{item}}</option>
+
+            </select>
+
+            <input type="text" id="title-filter" placeholder="Title" v-if="title" class="form-control filter-input" v-on:input="changeTitle($event)">
+
+            <select name="" id="director-filter" v-if="director" class="form-control filter-input" v-on:change="filter" v-model="director_val">
+              <option value="">Director</option>
+              <option v-for="(item, index) in director_data" :key="index" :value="item">{{item}}</option>
+            </select>
+          </div>
+            <div class="card" v-for="(item, index) in currentFilms" :key="index">
+              <div class="image-box w-30" >
+                <img :src='item.film.img' class="image" alt="">
+              </div>
+              <div class="description w-70">
+                <div class="w-50-im padding-40">
+                  <p>{{item.film.title}} </p>
+                  <p>{{item.film.original_title}}</p>
+                  <p v-for="(category, index) in item.category">{{category}}</p>
+                </div>
+                <div class="w-50-im padding-40">
+                  <p>{{item.film.year}}</p>
+                  <p v-for="(director, index) in item.director">{{director}}</p>
+                </div>
+              </div>
+            </div>
+          
+          <div class="pagination">
+          </div>
+  
+          <div class="page-show">
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <script>
+    var myObject = new Vue({
+        el: '#film',
+        data: {
+            films: [],
+            filteredFilms: [],
+            currentFilms:[],
+            username:"",
+            year: false,
+            category: false,
+            title: false,
+            director: false,
+            category_data:[],
+            director_data:[],
+            titles:[],
+            year_val:"",
+            title_val:"",
+            category_val:"",
+            director_val:""
+        },
+        methods: {
+            filterTerm: function() {
+                console.log('-------')
+                this.filteredFilms = this.films.filter(x => {
+                    return x.title.includes('o')
+                });
+            },
+
+            changeYear: function(event){
+              this.year_val = event.target.value;
+              this.filter();
+            },
+
+            changeTitle: function(event){
+              this.title_val = event.target.value;
+              this.filter();
+            },
+
+            filter: function(){
+              this.filteredFilms = this.films.filter(x => {
+                  let check = false;
+                  if(this.category_val && !this.director_val){
+                    check = x.film.year.includes(this.year_val) && x.film.title.includes(this.title_val) && x.category.includes(this.category_val)
+                  } else if (this.director_val && !this.category_val){
+                    check = x.film.year.includes(this.year_val) && x.film.title.includes(this.title_val) && x.director.includes(this.director_val) 
+                  } else if (!this.category_val && !this.director_val){
+                    check = x.film.year.includes(this.year_val) && x.film.title.includes(this.title_val)
+                  } else{
+                    check = x.film.year.includes(this.year_val) && x.film.title.includes(this.title_val) && x.category.includes(this.category_val) && x.director.includes(this.director_val)
+                  }
+                    return check
+                });
+              this.currentFilms = this.filteredFilms.slice(0,2);
+              pagination(Math.round(this.filteredFilms.length/2), 1);
+            },
+
+            getFilms() {
+                const requestOptions = {
+                    method: "GET",
+                };
+                fetch("http://localhost:3000/getFilms", requestOptions).then(res =>  res.json()).then(response => {
+                    console.log("getFilms -> response", response.data.result[0].director)
+                    this.films = response.data.result;
+                    for(let i = 0; i < this.films.length; i++){
+                      let film = this.films[i];
+                      this.titles.push(film.film.title);
+                    }
+                    
+                    this.filteredFilms = this.films
+                    this.currentFilms = this.filteredFilms.slice(0,2);
+                    this.username = response.data.user? response.data.user.username: "";
+                    if(response.data.user){
+                      var userID = response.data.user.userid;
+                      const Options = {
+                          method: "GET",
+                      };
+                      var url = "http://localhost:3000/userPermission/"+userID;
+                      fetch(url, Options).then(res =>  res.json()).then(response => {
+                        console.log(response.data.category)
+                        for(let i = 0; i < response.data.permissions.length; i++){
+                          switch (response.data.permissions[i].permission_id){
+                            case 1 :
+                              this.year = true;
+                              break;
+                            case 2 :
+                              this.category = true;
+                              break;
+                            case 3 :
+                              this.title = true;
+                              break;
+                            case 4 :
+                              this.director = true;
+                              break;
+                          }
+                        }
+
+                        for(let i = 0; i < response.data.category.length; i++){
+                          let cat = response.data.category[i];
+                          this.category_data.push(cat.name);
+                        }
+
+                        for(let i = 0; i < response.data.director.length; i++){
+                          let dir = response.data.director[i];
+                          this.director_data.push(dir.name);
+                        }
+                      }).catch(err =>{
+                        console.log(err);
+                      })
+                    }
+                    pagination(Math.round(this.filteredFilms.length/2), 1);
+                    
+                }).catch(err => {
+                    console.log(err)
+                })
+            },
+            changePage(num){
+              this.currentFilms = this.filteredFilms.slice(2*(num-1),2*num);
+              pagination(Math.round(this.filteredFilms.length/2), num)
+            }
+        },
+        mounted: function () {
+            this.getFilms();
+        }
+    })
+
+    function pagination(total, current){
+      var page_start = current-2 > 1 ? current-2 : 1;
+      var page_end = current+2 > total ? total : current+2;
+
+      $(".pagination").html("");
+      if(current == 1){
+        $(".pagination").append('<a class="disable"  id="first"><<</a><a class="disable" id="before"><</a>')
+      } else{
+        $(".pagination").append('<a class="page"  id="first"><<</a><a class="page" id="before"><</a>')
+      }
+      for(let i = page_start; i <= page_end; i++){
+        if(i == current){
+          $(".pagination").append('<a class="page active" id="'+i+'">'+i+'</a>')
+        }else{
+          $(".pagination").append('<a class="page" id="'+i+'">'+i+'</a>')
+        }
+      }
+      if(current == total){
+        $(".pagination").append('<a class="disable"  id="after">></a><a class="disable" id="last">>></a>')
+      }else{
+        $(".pagination").append('<a class="page"  id="after">></a><a class="page" id="last">>></a>')
+      }
+      $(".page-show").html('<h5>Page '+current+' of '+total+'</h5>')
+
+      $(".page").click((event)=>{
+        if(event.target.id=='before'){
+          myObject.changePage(current-1);
+        }else if(event.target.id=='first'){
+          myObject.changePage(1);
+        }else if(event.target.id=='last'){
+          myObject.changePage(total);
+        }else if(event.target.id=='after'){
+          myObject.changePage(current+1);
+        }else{
+          myObject.changePage(parseInt(event.target.id));
+        }
+      })
+    }
+
+    
+  </script>
+  </body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.2.0/css/font-awesome.min.css" />
+    <link href='https://fonts.googleapis.com/css?family=Slabo+27px|Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+  </head>
+  <body>
+    <div class="navbar">
+      <ul id="header">
+        <a href="#" id="brand">
+          <li>
+            Films
+          </li>
+        </a>
+        <label id="trigger2" for="x7"><i class="fa fa-bars"></i></label>
+      </ul>
+      <input type="checkbox" id="x7" />
+      <ul id="main">
+        <a href="#">
+          <li class="x1">
+            Link
+          </li>
+        </a>
+        <a href="#" id="trigger">
+          <li class="x1">
+            Dropdown &nbsp;
+            <span id="caret"></span>
+          </li>
+        </a>
+        <ul id="dropdown">
+          <a href="/member">
+            <li>
+              Members
+            </li>
+          </a>
+          <a href="/login">
+            <li>
+              Login
+            </li>
+          </a>
+          <a href="/logout">
+            <li>
+              Log out
+            </li>
+          </a>
+          <div class="dropdown-devider"></div>
+          <a href="#">
+            <li>
+              Something else here
+            </li>
+          </a>
+        </ul>
+      </ul>
+    </div>
+    <div class="main">
+        <div class="container" id="">
+          <h2>User Permissions : <%= username %></h2>
+
+          <div class="form-group">
+            <form action="/updatePermission" method="POST" id="updatepermission">
+              <div class="row">
+                <input type="checkbox" id="year" name="year" value="1">
+                <label for="year"> Year</label><br>
+              </div>
+              <div class="row">
+                <input type="checkbox" id="category" name="category" value="1">
+                <label for="category"> Category</label><br>
+              </div>
+              <div class="row">
+                <input type="checkbox" id="title" name="title" value="1">
+                <label for="title"> Title</label><br>
+              </div>
+              <div class="row">
+                <input type="checkbox" id="director" name="director" value="1">
+                <label for="director"> Director</label><br><br>
+              </div>              
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input type="hidden" name=data value="" id=data>
+              <button type="button" class="success" id="save">Save</button>
+              <a href="/member"><button type="button" class="return">Return</button></a>
+            </form>
+            
+          </div>
+        </div>
+    </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    function htmlDecode(input){
+      var e = document.createElement('div');
+      e.innerHTML = input;
+      return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+    }
+    $( document ).ready(function() {
+        var permissions = JSON.parse(htmlDecode("<%= JSON.stringify(permissions) %>"));
+        var token = JSON.parse(htmlDecode("<%= JSON.stringify(csrfToken) %>"));
+        var userID = JSON.parse(htmlDecode("<%= JSON.stringify(userID) %>"));
+        console.log(userID)
+
+        for(let i = 0; i < permissions.length; i++){
+          var permission_id = permissions[i].permission_id;
+          console.log(permission_id)
+          switch (permission_id){
+            case 1:
+              $( "#year" ).prop( "checked", true );
+              break;
+            case 2:
+              $( "#category" ).prop( "checked", true );
+              break;
+            case 3:
+              $( "#title" ).prop( "checked", true );
+              break;
+            case 4:
+              $( "#director" ).prop( "checked", true );
+              break;
+          }
+        }
+
+        $("#save").click(()=>{
+          var data = [];
+          if($("#year").prop('checked') == true){
+              data.push(1);
+          }
+          if($("#category").prop('checked') == true){
+              data.push(2);
+          }
+          if($("#title").prop('checked') == true){
+              data.push(3);
+          }
+          if($("#director").prop('checked') == true){
+              data.push(4);
+          }
+
+          var requestdata = {userID: userID, data:data};
+          requestdata = JSON.stringify(requestdata)
+          console.log(requestdata);
+
+          $("#data").val(requestdata);
+          $("#updatepermission").submit();
+
+        })
+    });
+</script>
+  </body>
+</html>
